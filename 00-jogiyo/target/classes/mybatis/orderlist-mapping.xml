@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mybatis.orderlistMapper">
+	<insert id="orderlistInsert" parameterType="orderlistDTO">
+		insert into orderlist values 
+		(#{id},#{ceo_seq},#{food},
+		#{foodQty},#{foodPrice},#{delivery_region},sysdate) 
+	</insert>
+	
+	<select id="dayProfit" parameterType="orderlistDTO" resultType ="String">
+		<![CDATA[
+			select  SUM(foodqty*foodprice) "Total" from orderlist where ceo_seq = #{ceo_seq} and
+			logtime >= to_date(#{logtime},'YYYYMMDD') and logtime < to_date(#{logtime},'YYYYMMDD') + 1
+		]]>
+	</select>
+
+	<select id="propitByMenu" parameterType="String" resultType ="orderlistDTO">
+		<![CDATA[
+		SELECT food, 
+		SUM(FOODPRICE) "FOODPRICE"
+		FROM orderlist where ceo_seq = #{ceo_seq} and
+		logtime >= to_char(sysdate-12,'YYYYMMDD') and logtime < to_char(sysdate+1,'YYYYMMDD')
+		GROUP BY food
+		]]>
+	</select>   	
+   	
+   	
+</mapper>
